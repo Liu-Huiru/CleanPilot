@@ -1,0 +1,34 @@
+/* 管理后台补充样式（复用 main.css 的变量与组件） */
+.admin-view { animation: fade .25s ease; }
+.admin-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 18px; }
+.admin-stat-grid .stat b { font-size: 24px; }
+.admin-two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.mem-wrap { padding: 18px 22px 22px; }
+.mem-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; margin-bottom: 10px; }
+.mem-row b { font-size: 20px; }
+.mem-bar { height: 9px; border-radius: 999px; background: #eef1fa; overflow: hidden; }
+.mem-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); transition: width .5s; }
+.mem-wrap p { margin-top: 10px; }
+.policy-list { list-style: none; margin: 14px 0 0; padding: 0 22px 22px; display: grid; gap: 10px; font-size: 13px; color: #374151; }
+.policy-list li { display: flex; align-items: center; gap: 10px; }
+.guard { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 24px; }
+.guard-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 48px 40px; max-width: 420px; text-align: center; }
+.guard-card h2 { font-size: 20px; margin-bottom: 10px; }
+.guard-card p { margin-bottom: 22px; }
+
+.device-name { font-weight: 600; }
+.device-path { font-size: 11.5px; color: var(--muted); word-break: break-all; max-width: 300px; }
+.device-cell-owner { font-size: 12.5px; color: var(--muted); }
+.mini-storage { min-width: 140px; }
+.mini-storage .meta { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
+.mini-storage .bar { height: 6px; border-radius: 999px; background: #eef1fa; overflow: hidden; }
+.mini-storage .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
+.row-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+@media (max-width: 1180px) {
+  .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-two { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .admin-stat-grid { grid-template-columns: 1fr; }
+}

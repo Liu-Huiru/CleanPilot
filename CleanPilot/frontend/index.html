@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CleanPilot 清源 · 智能存储治理</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f6ef7'/%3E%3Cpath d='M9 12h14M9 17h13M9 22h11' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ============ 登录 / 注册 ============ -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-left">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M4 7h16M4 12h14M4 17h10"/><circle cx="19" cy="17" r="2.4"/>
+      </svg>
+    </div>
+    <h1>CleanPilot <span>清源</span></h1>
+    <p class="login-slogan">让每一寸存储空间都物尽其用</p>
+    <ul class="login-points">
+      <li><i>01</i> AI 智能识别，分级判断文件风险</li>
+      <li><i>02</i> 清理先入回收站，保留期内随时恢复</li>
+      <li><i>03</i> 全流程审计留痕，操作可追溯</li>
+    </ul>
+    <div class="login-stats">
+      <div><b>R0-R3</b><span>四级风险模型</span></div>
+      <div><b>100%</b><span>清理可恢复</span></div>
+      <div><b>0</b><span>第三方依赖</span></div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-card">
+      <div class="tab-line">
+        <button id="tabLogin" class="tab active">登录</button>
+        <button id="tabRegister" class="tab">注册</button>
+      </div>
+      <form id="loginForm" class="auth-form">
+        <label>账号<input id="loginUser" autocomplete="username" placeholder="请输入用户名" required></label>
+        <label>密码<input id="loginPass" type="password" autocomplete="current-password" placeholder="请输入密码" required></label>
+        <button class="btn primary full" type="submit">进入 CleanPilot</button>
+        <p class="demo-hint">演示账号：
+          <button type="button" class="link-btn" data-demo="demo|user123">demo / user123</button>
+          ·
+          <button type="button" class="link-btn" data-demo="admin|admin123">admin / admin123</button>
+        </p>
+      </form>
+      <form id="registerForm" class="auth-form hidden">
+        <label>用户名<input id="regUser" placeholder="至少 2 个字符" required></label>
+        <label>密码<input id="regPass" type="password" placeholder="至少 6 位" required></label>
+        <button class="btn primary full" type="submit">创建账号并登录</button>
+        <p class="demo-hint">注册后即可添加自己的文件夹进行扫描</p>
+      </form>
+      <p id="loginError" class="form-error"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 主应用 ============ -->
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h14M4 17h10"/><circle cx="19" cy="17" r="2.4"/>
+        </svg>
+      </div>
+      <div class="brand-text"><b>CleanPilot</b><span>清源 · 存储治理</span></div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="overview">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        总览
+      </button>
+      <button class="nav-item" data-view="scan">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/><path d="M8 10.5h5M10.5 8v5"/></svg>
+        扫描与清理
+      </button>
+      <button class="nav-item" data-view="recycle">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+        回收站
+      </button>
+      <button class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6M9 7h4"/></svg>
+        清理报告
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-badge">
+        <span class="avatar" id="userAvatar">C</span>
+        <div><b id="userName">—</b><span id="userRole">—</span></div>
+      </div>
+      <button class="icon-btn" id="logoutBtn" title="退出登录">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">总览</h2>
+        <p id="pageSub" class="muted">设备存储状态与 AI 清理建议</p>
+      </div>
+      <div class="topbar-actions">
+        <select id="deviceSelect" class="device-select"></select>
+        <button id="refreshBtn" class="btn ghost small">刷新</button>
+        <button id="addDeviceBtn" class="btn primary small">+ 添加设备</button>
+        <a href="/admin.html" class="btn ghost small hidden" id="adminLink">管理后台</a>
+      </div>
+    </header>
+
+    <!-- 总览 -->
+    <section id="view-overview" class="view">
+      <div id="overviewEmpty" class="card empty-state hidden">
+        <div class="empty-icon">◎</div>
+        <h3>还没有接入设备</h3>
+        <p class="muted">添加一个本地文件夹，CleanPilot 会扫描其中的文件并按风险分级。</p>
+        <button class="btn primary" id="emptyAddDevice">添加第一个设备</button>
+      </div>
+      <div id="overviewContent" class="overview-grid hidden">
+        <div class="card storage-card">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#4f6ef7"/>
+                  <stop offset="100%" stop-color="#8b5cf6"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="60" cy="60" r="52"/>
+              <circle id="ringStroke" class="ring-stroke" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="ring-text"><b id="storagePct">0%</b><span>已使用</span></div>
+          </div>
+          <div class="storage-info">
+            <div class="storage-head">
+              <h3 id="storageDeviceName">—</h3>
+              <span id="healthPill" class="pill">健康分 —</span>
+            </div>
+            <p id="deviceMeta" class="muted">—</p>
+            <div class="storage-legend">
+              <div><span class="dot used"></span><b id="storageUsed">—</b><small>已用空间</small></div>
+              <div><span class="dot free"></span><b id="storageFree">—</b><small>可用空间</small></div>
+              <div><b id="storageTotal">—</b><small>总容量</small></div>
+            </div>
+            <div class="storage-actions">
+              <button id="quickScan" class="btn primary">开始扫描</button>
+              <button id="quickClean" class="btn ghost">查看可清理项</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="card stat"><span class="stat-label">可清理空间</span><b id="statCleanable">—</b><span class="stat-sub" id="statCleanableSub">—</span></div>
+          <div class="card stat"><span class="stat-label">回收站占用</span><b id="statRecycle">—</b><span class="stat-sub" id="statRecycleSub">—</span></div>
+          <div class="card stat"><span class="stat-label">累计释放</span><b id="statReleased">—</b><span class="stat-sub" id="statReleasedSub">—</span></div>
+          <div class="card stat"><span class="stat-label">最近扫描</span><b id="statScan">—</b><span class="stat-sub" id="statScanSub">—</span></div>
+        </div>
+
+        <div class="card suggestions-card">
+          <div class="card-head">
+            <h3>AI 智能建议</h3>
+            <button class="btn ghost small" id="openAiBtn">向 AI 提问</button>
+          </div>
+          <ul id="suggestions" class="suggest-list"><li class="muted">正在分析…</li></ul>
+        </div>
+
+        <div class="card risk-card">
+          <div class="card-head"><h3>风险分布</h3><span class="muted small" id="riskHint">—</span></div>
+          <div id="riskBreakdown" class="risk-breakdown"></div>
+        </div>
+
+        <div class="card category-card">
+          <div class="card-head"><h3>可清理类别</h3></div>
+          <div id="categoryBars" class="category-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 扫描与清理 -->
+    <section id="view-scan" class="view hidden">
+      <div id="scanStatusCard" class="card scan-card"></div>
+      <div class="card table-card">
+        <div class="card-head">
+          <h3>扫描结果</h3>
+          <div class="table-tools">
+            <input id="itemSearch" class="search-input" placeholder="搜索文件名 / 路径">
+            <button id="btnSelectSafe" class="btn ghost small">选中安全项</button>
+            <button id="btnClearSel" class="btn ghost small">清空选择</button>
+          </div>
+        </div>
+        <div id="riskChips" class="chips"></div>
+        <div id="categoryChips" class="chips"></div>
+        <div id="itemTableWrap" class="table-wrap"></div>
+      </div>
+      <div id="selectionBar" class="selection-bar hidden">
+        <div class="sel-info">已选 <b id="selCount">0</b> 项 · <b id="selBytes">0 B</b></div>
+        <button id="btnMakePlan" class="btn primary">生成清理方案</button>
+      </div>
+    </section>
+
+    <!-- 回收站 -->
+    <section id="view-recycle" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h3>回收站</h3>
+          <div class="head-actions">
+            <span class="muted small" id="recycleSummary"></span>
+            <button id="btnEmptyRecycle" class="btn ghost danger">清空回收站</button>
+          </div>
+        </div>
+        <div id="recycleList"></div>
+      </div>
+    </section>
+
+    <!-- 清理报告 -->
+    <section id="view-reports" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h3>清理任务记录</h3>
+          <button id="btnRefreshReports" class="btn ghost small">刷新</button>
+        </div>
+        <div id="reportList"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- AI 助手 -->
+<button id="aiFab" class="ai-fab hidden" title="打开 AI 助手">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H10l-4 3.5v-3.5H6.5A2.5 2.5 0 0 1 4 13.5z"/><path d="M9 8.5h6M9 12h4"/></svg>
+</button>
+<aside id="aiDrawer" class="ai-drawer hidden">
+  <div class="ai-head">
+    <div><b>CleanPilot AI</b><span>存储治理助手</span></div>
+    <button id="aiClose" class="icon-btn" title="收起">×</button>
+  </div>
+  <div id="aiMessages" class="ai-messages"></div>
+  <div id="aiQuick" class="ai-quick">
+    <button data-prompt="太卡了怎么办">太卡了怎么办</button>
+    <button data-prompt="我能删什么">我能删什么</button>
+    <button data-prompt="清理缓存">清理缓存</button>
+    <button data-prompt="清理安全吗">清理安全吗</button>
+  </div>
+  <form id="aiForm" class="ai-form">
+    <input id="aiInput" placeholder="问问 AI：我能删什么？" autocomplete="off">
+    <button class="btn primary small" type="submit">发送</button>
+  </form>
+</aside>
+
+<div id="modalRoot"></div>
+<div id="toastRoot" class="toast-root"></div>
+
+<script src="/js/api.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

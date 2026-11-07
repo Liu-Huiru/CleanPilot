@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CleanPilot 清源 · 管理后台</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f6ef7'/%3E%3Cpath d='M9 12h14M9 17h13M9 22h11' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div id="guard" class="guard hidden">
+  <div class="guard-card">
+    <h2>需要管理员权限</h2>
+    <p class="muted">请使用管理员账号（admin / admin123）登录后再访问管理后台。</p>
+    <a class="btn primary" href="/index.html">返回登录</a>
+  </div>
+</div>
+
+<div id="adminApp" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h14M4 17h10"/><circle cx="19" cy="17" r="2.4"/>
+        </svg>
+      </div>
+      <div class="brand-text"><b>CleanPilot</b><span>管理后台</span></div>
+    </div>
+    <nav class="nav" id="adminNav">
+      <button class="nav-item active" data-admin-view="overview">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        运行概览
+      </button>
+      <button class="nav-item" data-admin-view="devices">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+        设备管理
+      </button>
+      <button class="nav-item" data-admin-view="audit">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg>
+        审计日志
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-badge">
+        <span class="avatar" id="adminAvatar">A</span>
+        <div><b id="adminName">admin</b><span>管理员</span></div>
+      </div>
+      <button class="icon-btn" id="adminLogout" title="退出登录">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 4H5v16h5"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="adminTitle">运行概览</h2>
+        <p id="adminSub" class="muted">平台整体运行状态与治理成效</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="/index.html" class="btn ghost small">返回顾客端</a>
+        <button id="adminRefresh" class="btn ghost small">刷新</button>
+        <button id="adminAddDevice" class="btn primary small">+ 添加设备</button>
+      </div>
+    </header>
+
+    <!-- 概览 -->
+    <section id="view-admin-overview" class="admin-view">
+      <div class="admin-stat-grid">
+        <div class="card stat"><span class="stat-label">接入设备</span><b id="asDevices">—</b><span class="stat-sub">台设备</span></div>
+        <div class="card stat"><span class="stat-label">清理任务</span><b id="asTasks">—</b><span class="stat-sub">累计执行</span></div>
+        <div class="card stat"><span class="stat-label">累计释放</span><b id="asReleased">—</b><span class="stat-sub">已清理空间</span></div>
+        <div class="card stat"><span class="stat-label">完成扫描</span><b id="asScans">—</b><span class="stat-sub">次扫描</span></div>
+        <div class="card stat"><span class="stat-label">回收站</span><b id="asRecycle">—</b><span class="stat-sub">个文件保留中</span></div>
+        <div class="card stat"><span class="stat-label">内存占用</span><b id="asMem">—</b><span class="stat-sub" id="asMemSub">—</span></div>
+      </div>
+
+      <div class="admin-two">
+        <div class="card">
+          <div class="card-head"><h3>系统资源</h3><span class="muted small">宿主服务器</span></div>
+          <div class="mem-wrap">
+            <div class="mem-row"><span>内存使用率</span><b id="memPct">—</b></div>
+            <div class="mem-bar"><i id="memBar" style="width:0%"></i></div>
+            <p class="muted small" id="memDetail">—</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>治理策略说明</h3></div>
+          <ul class="policy-list">
+            <li><span class="badge risk-R0">R0</span> 缓存 / 临时文件 / 空文件，默认可安全清理</li>
+            <li><span class="badge risk-R1">R1</span> 过期安装包 / 重复文件 / 旧下载，默认选中</li>
+            <li><span class="badge risk-R2">R2</span> 大文件 / 压缩包 / 文档，需人工二次确认</li>
+            <li><span class="badge risk-R3">R3</span> 相册 / 程序目录 / 保护清单，永不清理</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 设备管理 -->
+    <section id="view-admin-devices" class="admin-view hidden">
+      <div class="card">
+        <div class="card-head"><h3>设备列表</h3><span class="muted small">包含所有用户的接入设备</span></div>
+        <div id="adminDeviceTable" class="table-wrap"></div>
+      </div>
+    </section>
+
+    <!-- 审计日志 -->
+    <section id="view-admin-audit" class="admin-view hidden">
+      <div class="card">
+        <div class="card-head"><h3>最近操作记录</h3><span class="muted small">最多展示 100 条</span></div>
+        <div id="adminAuditTable" class="table-wrap"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot" class="toast-root"></div>
+
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
